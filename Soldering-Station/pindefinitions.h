@@ -1,3 +1,4 @@
+/*
 #define SETUNUSEDINPUT( IO_PIN  ) {  pinMode(IO_PIN, INPUT); digitalWrite(IO_PIN, HIGH); }           // set pin to input, turn on pullup resistors  
 
 #define PIN_PA0 0
@@ -41,3 +42,4 @@
 #define PIN_PF4 38
 #define PIN_PF5 39
 #define PIN_PF6 40
+*/

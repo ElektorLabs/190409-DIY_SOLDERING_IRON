@@ -1,6 +1,10 @@
 #ifndef FRONTEND_190409_H_
  #define FRONTEND_190409_H_ 
  
+/*
+This frontend requiers: https://github.com/Seeed-Studio/Grove_4Digital_Display to be installed from the arduino IDE
+*/
+
  /* includes for this class */
  #include "Arduino.h"
  #include "enums.h"
@@ -40,6 +44,7 @@ public:
 
 private:
     uint16_t display_timout =0;
+    uint8_t display_heat_blink=0;
 
 
 };

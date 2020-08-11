@@ -26,6 +26,9 @@
 /* ROTARY_CW_LEVEL can be HIGH or LOW */
 #define ROTARY_CW_LEVEL ( LOW ) 
 
+#define MAX_TEMP       ( 450 )
+#define MIN_TEMP       ( 50 )
+
 #define MAX_PWM        2048
 #define MAX_PWM_LIMIT  2048
 #define SAFE_PWM_VALUE 2048
@@ -61,6 +64,8 @@ class HW_190409 {
         void ShowUndervoltage();
         void SetSolderingIron(SolderingIronType_t Iron );
         SolderingIronType_t GetSolderingIron( void );
+        uint16_t read_StoreTemperature( void );
+        void write_StoreTemperature(uint16_t tempValue);
                 
     private:
       

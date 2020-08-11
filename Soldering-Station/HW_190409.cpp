@@ -98,6 +98,8 @@ void HW_190409::Setup( void (*cb_250us_Timer)(void) ){
                         
     sei();
 
+    
+
 }
 
 /**********************************************************************************************************
@@ -363,4 +365,43 @@ SolderingIronType_t HW_190409::read_StoreIronConfig( void )
    }
    return (SolderingIronType_t)(mode);
    
+}
+
+/*************************************************************************************************************
+ *                                          read_StoreTemperature()
+ *************************************************************************************************************
+ Function:    read_StoreTemperature()
+ Input:       None
+ Output:      uint16_t 
+ Description: Read previous saved temperature from EEPROM,
+              If no previous value saved then set temperature to 50 degrees
+ *************************************************************************************************************/    
+uint16_t HW_190409::read_StoreTemperature()
+{
+   uint16_t saved_Temperature_1=0;
+
+   saved_Temperature_1 = EEPROM.read(2);
+   saved_Temperature_1 = saved_Temperature_1 << 8;
+   saved_Temperature_1 = saved_Temperature_1 | EEPROM.read(3);
+  
+   if( ( saved_Temperature_1 > MAX_TEMP) || ( saved_Temperature_1 < MIN_TEMP) ){
+    saved_Temperature_1= MIN_TEMP ;
+   }
+   return saved_Temperature_1;
+   
+}
+
+/*************************************************************************************************************
+ *                                          write_StoreTemperature()
+ *************************************************************************************************************
+ Function:    write_StoreTemperature()
+ Input:       Nones
+ Output:      uint16_t 
+ Description: Read previous saved temperature from EEPROM,
+              If no previous value saved then set temperature to 50 degrees
+ *************************************************************************************************************/    
+void HW_190409::write_StoreTemperature(uint16_t tempValue)
+{
+            EEPROM.update(2, ( ( tempValue & 0xFF00 ) >> 8 ) );
+            EEPROM.update(3, ( ( tempValue & 0x00FF ) >> 0 ) );
 }

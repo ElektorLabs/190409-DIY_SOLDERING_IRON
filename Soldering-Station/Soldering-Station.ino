@@ -1,29 +1,28 @@
 /*********************************************************************************************************************
-                   Project Name : SMD Soldering Station
+                   Project Name : Soldering Station 2020
 **********************************************************************************************************************
-MCU used     : ATmega32u4
-Descriptoon  : A simple SMD soldering station is designed with an intension to make a compact version of a temperature
-               control unit for the weller tip. This soldering device can be used to heat up the soldering bit to a 
+MCU used     : Atmega4809
+Descriptoon  : A simple soldering station is designed with an intension to make a compact version of a temperature
+               control unit for the weller, Hakko or JBC tip. This soldering device can be used to heat up the soldering bit to a 
                temperature ranging from 50 – 450 degree Celsius and also to check the temperature of the soldering bit.
-version       : 1.1 ( 14.05.2019 )
+version       : 1.0 ( 11.08.2020 )
 ***********************************************************************************************************************/
 
-#include <EEPROM.h>
+/* Librarys requiered:
+ OneWire 2.3.5 by Paul Stoffregen
+ Grove 4-Digit Display 1.0 by Seeed Studio
+
+ Boardpackage requiered:
+ MegaCoreX ( https://github.com/MCUdude/MegaCoreX ) 
+  
+*/
+
+#include <Arduino.h>
 #include "enums.h"
 
  #include "HW_190409.h"
  #include "serialcli.h"
  HW_190409 Station;
-
-
-
-
-
-
-/* The minimum input voltage we will run on */
-/* This are common defines valid for all IRONs */
-#define MAX_TEMP       ( 450 )
-#define MIN_TEMP       ( 50 )
 
 #define POWERSAVE_TIMEOUT ( 10 * 60 )
 #define DETLA_REG ( 50 )
@@ -57,8 +56,6 @@ bool powerStandby_F = false;
 void display_Sleep( void );
 void rotary_EncoderEnable(void);
 void rotary_EncoderDisable( void );
-uint16_t read_StoreTemperature(void);
-void write_StoreTemperature(uint16_t tempValue);   
 void pwm_Adjust(void);
 void Timer_250us_Callback( void );
 void powerSave_TimerReset( void );
@@ -79,7 +76,7 @@ void ProcessRotaryEncoderInput( RotaryEncoderEvent_t event );
 void setup()
 {  
    
-    setpoint = read_StoreTemperature();                 //Read previous saved temperature from EEPROM
+    setpoint = Station.read_StoreTemperature();                 //Read previous saved temperature from EEPROM
     Station.Setup(Timer_250us_Callback);                  //Hardwaresetup for the system                                  
     Serial.begin(115200);
     rotary_EncoderEnable();                             //Pin Change interrupt setting
@@ -99,14 +96,24 @@ void setup()
 **********************************************************************************************************/
 void loop() 
 {
+        
         SerialConsoleProcess();
+        Station.Temp.OneWireStartConversation();
+        Station.Temp.GetLastOneWireTempKelvin();
         /* This check can also return states and we can react to it */
+       
         switch(state){ 
          /*************************************************************
                                STATE WELCOME_LOGO       
           *************************************************************/
          case WELCOME_LOGO:{
            Station.Frontend.display_welcome_logo();
+               if(true == Station.Temp.SearchOneWireSensor() ){
+                Serial.println("Read Onewire Sensor");
+                uint16_t Temp = Station.Temp.GetWireTempKelvin();
+               }else{
+                Serial.println("No Sensor found");
+              }
            set_delay(2000);                        /* delay for the next state */
            state = WELCOME_LOGO_WAIT; 
         } break;
@@ -175,7 +182,7 @@ void loop()
         case NOFAULT: {
           clear_error=0;
           Station.Frontend.display_show_Temperatur(display_Temp,HeatPwr_Percent,setpoint,state,timestamp);
-          write_StoreTemperature(setpoint);        //store "set temperature" in eeprom
+          Station.write_StoreTemperature(setpoint);        //store "set temperature" in eeprom
           pwm_Adjust();
           Station.CheckLimits();   
           /* avg_pwr for powersave */
@@ -405,8 +412,15 @@ uint16_t command_if_get_temperature( void ){
 }
 
 
-int16_t command_if_get_ambienttemp( void ){
-  int16_t Temp = Station.Temp.GetAmbientTemperaturKelvin();
+int16_t command_if_get_onchiptemp( void ){
+  int16_t Temp = Station.Temp.GetOnchipTempKelvin();
+  Temp = Temp-273;
+  return Temp;
+}
+
+
+int16_t command_if_get_onewiretemp( void ){
+  int16_t Temp = Station.Temp.GetLastOneWireTempKelvin();
   Temp = Temp-273;
   return Temp;
 }
@@ -888,46 +902,6 @@ if(0==RotaryEncoderLocked) {
  }
  
 
-}
-
-
-/*************************************************************************************************************
- *                                          read_StoreTemperature()
- *************************************************************************************************************
- Function:    read_StoreTemperature()
- Input:       None
- Output:      uint16_t 
- Description: Read previous saved temperature from EEPROM,
-              If no previous value saved then set temperature to 50 degrees
- *************************************************************************************************************/    
-uint16_t read_StoreTemperature()
-{
-   uint16_t saved_Temperature_1=0;
-
-   saved_Temperature_1 = EEPROM.read(2);
-   saved_Temperature_1 = saved_Temperature_1 << 8;
-   saved_Temperature_1 = saved_Temperature_1 | EEPROM.read(3);
-  
-   if( ( saved_Temperature_1 > MAX_TEMP) || ( saved_Temperature_1 < MIN_TEMP) ){
-    saved_Temperature_1= MIN_TEMP ;
-   }
-   return saved_Temperature_1;
-   
-}
-
-/*************************************************************************************************************
- *                                          write_StoreTemperature()
- *************************************************************************************************************
- Function:    write_StoreTemperature()
- Input:       Nones
- Output:      uint16_t 
- Description: Read previous saved temperature from EEPROM,
-              If no previous value saved then set temperature to 50 degrees
- *************************************************************************************************************/    
-void write_StoreTemperature(uint16_t tempValue)
-{
-            EEPROM.update(2, ( ( tempValue & 0xFF00 ) >> 8 ) );
-            EEPROM.update(3, ( ( tempValue & 0x00FF ) >> 0 ) );
 }
 
 

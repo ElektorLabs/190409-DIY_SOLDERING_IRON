@@ -23,7 +23,8 @@ typedef enum {
     cmd_none = 0,
     cmd_setpoint,
     cmd_temperatur,
-    cmd_ambienttemp,
+    cmd_onchiptemp,
+    cmd_onewiretemp, 
     cmd_error,
     cmd_irontype,
     cmd_cnt
@@ -77,7 +78,8 @@ cmd_param_t ParamLUT[ cmd_cnt ]={
  [cmd_none] = param_none,
  [cmd_setpoint] = praam_u16,
  [cmd_temperatur] = param_none,
- [cmd_ambienttemp] = param_none,
+ [cmd_onchiptemp] = param_none,
+ [cmd_onewiretemp] = param_none,
  [cmd_error] = param_none,
  [cmd_irontype] = param_keyword
 };
@@ -89,13 +91,11 @@ extern uint16_t command_if_get_setpoint( void );
 extern uint16_t command_if_get_temperature(void  );
 extern uint8_t command_if_get_error( void );
 extern void command_if_clear_error( void );
-extern int16_t command_if_get_ambienttemp( void );
 extern SolderingIronType_t command_if_get_irontype( void );
 extern void command_if_set_irontype( SolderingIronType_t iron );
 
-
-
-
+extern int16_t command_if_get_onchiptemp( void );
+extern int16_t command_if_get_onewiretemp( void );
 
 
 void ProcessCommand(  serial_command_t command );
@@ -177,7 +177,8 @@ void SerialCommandShowHelp( void ){
     Serial.println(F("                  HKO = HAKKO Tip ( 24V / Type C )  "));
     Serial.println(F("                  JBC = JBC Tip ( 24V / Type K )  "));
     Serial.println(F("get temperature        -> This will report the current temp."));
-    Serial.println(F("get ambienttemp        -> This will report the ambient temp."));
+    Serial.println(F("get onchiptemp         -> This will report the onchip temp."));
+    Serial.println(F("get onewiretemp         -> This will report the onewire temp."));
     Serial.println(F("clear error            -> If an error is shown this will clear it"));
     Serial.println(F("help                   -> This will show this help"));
     Serial.println(F("-------------------------------------------------------------------"));
@@ -246,8 +247,10 @@ serial_command_t SerialConsoleParseInput( void ){
                     command.command=cmd_setpoint;
                 } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("temperature"), (tokenlenght) )==0){
                     command.command=cmd_temperatur;
-                 } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("ambienttemp"), (tokenlenght) )==0){
-                    command.command=cmd_ambienttemp;
+                } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("onchiptemp"), (tokenlenght) )==0){
+                    command.command=cmd_onchiptemp;
+                } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("onewiretemp"), (tokenlenght) )==0){
+                    command.command=cmd_onewiretemp;
                 } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("error"), (tokenlenght) )==0){
                     command.command=cmd_error;
                 } else if(strncmp_P(&msgbuffer[startidx] ,PSTR("irontype"), (tokenlenght) )==0){
@@ -513,9 +516,15 @@ void ProcessCommand(  serial_command_t command ){
                                     Serial.print(F("\n\rOK\n\r")); 
                                     } break;
 
-                                    case cmd_ambienttemp:{
-                                    Serial.print(F("Ambient Temperatur:"));
-                                    Serial.print(command_if_get_ambienttemp());  
+                                    case cmd_onchiptemp:{
+                                    Serial.print(F("OnChip Temperatur:"));
+                                    Serial.print(command_if_get_onchiptemp());  
+                                    Serial.print(F("\n\rOK\n\r"));  
+                                    } break;
+
+                                    case cmd_onewiretemp:{
+                                    Serial.print(F("1-Wire Temperatur:"));
+                                    Serial.print(command_if_get_onewiretemp());  
                                     Serial.print(F("\n\rOK\n\r"));  
                                     } break;
 

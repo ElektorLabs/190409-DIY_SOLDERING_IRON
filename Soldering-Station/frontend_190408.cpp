@@ -16,6 +16,11 @@ void FE_190409::display_1ms_tick( void ){
     if(display_timout>0){
         display_timout--;
     }
+    if(display_heat_blink<1000){
+        display_heat_blink++;
+    } else {
+        display_heat_blink=0;
+    }
 
 
 }
@@ -89,19 +94,19 @@ void FE_190409::display_show_config( void  ){
 void FE_190409::display_show_current_ironmode( SolderingIronType_t Iron){
     switch( Iron){
         case IRON_HAKKO_FX8801:{
-            tm1637.displayStr("0 C1");
+            tm1637.displayStr("0 C1"); //24V
         }break;
 
         case IRON_JBC_T245A:{
-            tm1637.displayStr("0 C2");
+            tm1637.displayStr("0 C2"); //24V
         }break;
 
         case IRON_WELLER_RT:{
-            tm1637.displayStr("0 C3");
+            tm1637.displayStr("0 C3"); //12V
         }break;
 
         default:{
-            tm1637.displayStr("0 C8");
+            tm1637.displayStr("0 C8"); //Default 12V
         }break;
 
     }
@@ -160,9 +165,42 @@ void FE_190409::display_show_Temperatur(uint16_t dispTemperature, uint8_t HeatPw
             dispval = dispTemperature;
             tm1637.set(BRIGHT_TYPICAL);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
     }
-    tm1637.displayNum(dispval);
- 
 
+    /*
+    tm1637.displayNum(dispval);
+    */
+
+
+    // Displays number with decimal places (no decimal point implementation)
+    // Colon is used instead of decimal point if decimal == 2
+    // Be aware of int size limitations (up to +-2^15 = +-32767)
+    uint8_t DIGITS = 4;
+    int number = round(fabs(dispTemperature) * pow(10, 0));
+
+    for (int i = 0; i < DIGITS; ++i) {
+        int j = DIGITS - i - 1;
+
+        if (number != 0) {
+            tm1637.display(j, number % 10);
+        } else {
+            tm1637.display(j, 0x7f);    // display nothing
+        }
+
+        number /= 10;
+    }
+    if(setpoint > dispTemperature){
+        if(display_heat_blink<500){
+            tm1637.point(true);
+        } else {
+            tm1637.point(false);    
+        }
+    } else {
+        tm1637.point(false);
+    }
+
+    tm1637.display(0, ' ');    // Display ' '
+    
+    tm1637.point(false);
 
 
 }
