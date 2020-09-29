@@ -49,8 +49,7 @@ uint16_t TEMP_190409::Read( uint8_t avg_cnt){
       AmbienetTempKelvin = 233;
    }
    
-   //We need to substract 273.15° to get Celsius and also 25°C as all calculations will add 25°C as this is
-   //is considered room temperatur makes -298.15 ~299---
+   //We need to substract 273.15° to get Celsius
    int16_t OffSetDegree =  AmbienetTempKelvin  - 299 ;
 
    
@@ -148,9 +147,7 @@ int16_t TEMP_190409::GetAmbientTemperaturKelvin( void ){
   if(true == OneWireSensorFound){
     return GetLastOneWireTempKelvin();
   } else {
-    //return GetOnchipTempKelvin(); //This is generally 7°C above ambient
-    //we return simply 25°C
-    return 298;
+    return GetOnchipTempKelvin();
   }
 }
 
@@ -261,8 +258,7 @@ bool TEMP_190409::OneWireStartConversation( void ){
     
   } 
 
-  
-  if(  ( ( last_onewirestrart+20000 )<millis()  )  && ( true == OneWireSensorFound) ) {
+  if( ( last_onewirestrart+20000 )<millis() ){
     ds.reset_search();
     last_onewirestrart=millis();
         
@@ -276,7 +272,6 @@ bool TEMP_190409::OneWireStartConversation( void ){
             
             
    }
-
         
   
   return false;

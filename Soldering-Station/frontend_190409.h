@@ -44,7 +44,7 @@ public:
 
 private:
     uint16_t display_timout =0;
-    uint16_t display_heat_blink=0;
+    uint8_t display_heat_blink=0;
 
 
 };
