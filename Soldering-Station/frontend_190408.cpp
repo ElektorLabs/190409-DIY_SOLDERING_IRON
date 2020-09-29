@@ -54,7 +54,7 @@ void FE_190409::display_setup( void ){
  Discription: Shows the welcome logo
 **********************************************************************************************************/
 void FE_190409::display_welcome_logo( void ) {
-    tm1637.displayStr("F1_4");
+    tm1637.displayStr("F1_5");
 }
 
 /**********************************************************************************************************
@@ -225,6 +225,7 @@ void FE_190409::display_show_TempError(uint8_t ErrNo){
 
         
     }
+    tm1637.set(BRIGHT_TYPICAL);
     tm1637.displayStr(err_str);
 
 }

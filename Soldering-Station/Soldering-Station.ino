@@ -753,7 +753,7 @@ void Timer_250us_Callback( void )
    }
 
    if( (0x03==input_a_buffer) ){ /* Rising edge */
-  /*  We ssume terminal B as stable
+  /*  We assume terminal B as stable
    *  if it is LOW now we moved CW else
    *  CCW
    */
