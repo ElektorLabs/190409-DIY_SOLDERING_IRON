@@ -43,8 +43,8 @@ public:
     void display_1ms_tick( void );
 
 private:
-    uint16_t display_timout =0;
-    uint8_t display_heat_blink=0;
+    volatile uint16_t display_timout =0;
+    volatile uint8_t display_heat_blink=0;
 
 
 };

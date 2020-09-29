@@ -13,16 +13,17 @@ TM1637 tm1637(TM1637_CLK, TM1637_DIO);
  Discription: To be called every 1ms for internal timing
 **********************************************************************************************************/
 void FE_190409::display_1ms_tick( void ){
+   static uint8_t value=0;
+   if(value>0){
+    value=0;
+    digitalWrite(18, LOW);
+   } else {
+    value++;
+    digitalWrite(18, HIGH);
+   }
     if(display_timout>0){
         display_timout--;
     }
-    if(display_heat_blink<1000){
-        display_heat_blink++;
-    } else {
-        display_heat_blink=0;
-    }
-
-
 }
 /**********************************************************************************************************
                                 void display_setup()        
@@ -54,7 +55,7 @@ void FE_190409::display_setup( void ){
  Discription: Shows the welcome logo
 **********************************************************************************************************/
 void FE_190409::display_welcome_logo( void ) {
-    tm1637.displayStr("F1_4");
+    tm1637.displayStr("F1_6");
 }
 
 /**********************************************************************************************************
@@ -161,6 +162,7 @@ void FE_190409::display_show_Temperatur(uint16_t dispTemperature, uint8_t HeatPw
     
     if(display_timout > 0){
             //We do nothing right now
+            dispval = setpoint;
     } else {
             dispval = dispTemperature;
             tm1637.set(BRIGHT_TYPICAL);//BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
@@ -175,32 +177,34 @@ void FE_190409::display_show_Temperatur(uint16_t dispTemperature, uint8_t HeatPw
     // Colon is used instead of decimal point if decimal == 2
     // Be aware of int size limitations (up to +-2^15 = +-32767)
     uint8_t DIGITS = 4;
-    int number = round(fabs(dispTemperature) * pow(10, 0));
+    int number = round(fabs(dispval) * pow(10, 0));
 
     for (int i = 0; i < DIGITS; ++i) {
         int j = DIGITS - i - 1;
 
-        if (number != 0) {
-            tm1637.display(j, number % 10);
-        } else {
-            tm1637.display(j, 0x7f);    // display nothing
-        }
-
-        number /= 10;
+          if(j!=0){
+            tm1637.point(false);
+            if (number != 0) {
+                tm1637.display(j, number % 10);
+            } else {
+                tm1637.display(j, 0x7f);    // display nothing
+            }
+  
+            number /= 10;
+          } else {
+                if(dispTemperature<setpoint){
+                  uint8_t timediv=millis()/500;
+                  if(timediv%2==0){
+                    tm1637.point(false);
+                  } else {
+                    tm1637.point(true);
+                  }
+                } else {
+                  tm1637.point(false);
+                }
+                tm1637.display(0, ' ');    // display nothing
+          }
     }
-    if(setpoint > dispTemperature){
-        if(display_heat_blink<500){
-            tm1637.point(true);
-        } else {
-            tm1637.point(false);    
-        }
-    } else {
-        tm1637.point(false);
-    }
-
-    tm1637.display(0, ' ');    // Display ' '
-    
-    tm1637.point(false);
 
 
 }

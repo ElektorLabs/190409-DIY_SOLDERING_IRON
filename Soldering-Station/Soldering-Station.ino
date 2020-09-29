@@ -96,7 +96,7 @@ void setup()
 **********************************************************************************************************/
 void loop() 
 {
-        
+      
         SerialConsoleProcess();
         Station.Temp.OneWireStartConversation();
         Station.Temp.GetLastOneWireTempKelvin();
