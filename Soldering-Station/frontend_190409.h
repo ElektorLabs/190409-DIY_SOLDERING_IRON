@@ -44,8 +44,5 @@ public:
 
 private:
     volatile uint16_t display_timout =0;
-    volatile uint8_t display_heat_blink=0;
-
-
 };
 #endif

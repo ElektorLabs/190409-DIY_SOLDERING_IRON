@@ -5,7 +5,7 @@ MCU used     : Atmega4809
 Descriptoon  : A simple soldering station is designed with an intension to make a compact version of a temperature
                control unit for the weller, Hakko or JBC tip. This soldering device can be used to heat up the soldering bit to a 
                temperature ranging from 50 – 450 degree Celsius and also to check the temperature of the soldering bit.
-version       : 1.0 ( 11.08.2020 )
+version       : 1.6 ( 30.09.2020 )
 ***********************************************************************************************************************/
 
 /* Librarys requiered:
@@ -13,8 +13,19 @@ version       : 1.0 ( 11.08.2020 )
  Grove 4-Digit Display 1.0 by Seeed Studio
 
  Boardpackage requiered:
- MegaCoreX ( https://github.com/MCUdude/MegaCoreX ) 
+ MegaCoreX ( https://github.com/MCUdude/MegaCoreX ) Version 1.0.4
   
+
+ Arduino Settings:
+  Board: Atmega4809
+  Clock: Internal 20 MHz
+  BOD: BOD 2.6V
+  Pinout: 48 Pin standard
+  Reset Pin: Reset
+
+  Version 1.6
+  - Initial Project release
+
 */
 
 #include <Arduino.h>

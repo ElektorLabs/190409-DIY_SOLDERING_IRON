@@ -13,15 +13,30 @@ Be aware that after flashing the new software, your current temperature settings
 
 ### Prerequisites
 
-You need TimerOne library installed in your libs path.
+You need the following libraries installed in your libs path:
+ - OneWire 2.3.5 by Paul Stoffregen
+ - Grove 4-Digit Display 1.0 by Seeed Studio
 
+For the Atmega4809 install the MegaCoreX Board package
+ - MegaCoreX Version 1.0.4 ( https://github.com/MCUdude/MegaCoreX ) 
+  
+To compile the code make sure you have the follwing settings set in you ArduinIDE:
 
-### Serialinterface ( since firmware 1.2 )
+- Board: Atmega4809
+- Clock: Internal 20 MHz
+- BOD: BOD 2.6V
+- Pinout: 48 Pin standard
+- Reset Pin: Reset
 
-The USB-connector on the station works as serial device. If you plug it in your computer you can than access
-the serial port with the terminal form the arduino ide or putty / puttytel or any other serial terminal. If 
-you are forced to set a baudrate choose 115200, as this is serial over usb the device basically don't care. 
-As we have the leonardo bootloader on the chip don't user 1200 baud, as this may triggers the bootlloader. 
+To uploade code to the Atmega4809 use a ICE2UDPI programmer or a MPLAB PIC KIT4 / MPLAB SNAP 
+To build your own ICE2UPDI Adapter have a look at : https://www.elektormagazine.com/labs/arduino-for-updi-programming-for-atmega4809-and-tiny816817-with-jtag2updi
+This programmer now works with the ArduinoIDE out of the box. 
+
+### Serialinterface 
+!! Be warned: If you connect the serail interface to your computer you will loose the galvanic isolation for the soldering tip !!
+
+The UART0 ( K10 )  on the station works as serial device. If you plug it at TTL to USB Adaptor you can than access
+the serial port with the terminal form the arduino ide or putty / puttytel or any other serial terminal. Baudrate is 115200 (8N1)
 
 ##### Supported commands of the console
 
