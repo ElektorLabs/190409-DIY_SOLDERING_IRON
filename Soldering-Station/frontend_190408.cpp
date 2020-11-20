@@ -55,7 +55,7 @@ void FE_190409::display_setup( void ){
  Discription: Shows the welcome logo
 **********************************************************************************************************/
 void FE_190409::display_welcome_logo( void ) {
-    tm1637.displayStr("F1_6");
+    tm1637.displayStr("F1_7");
 }
 
 /**********************************************************************************************************
@@ -80,6 +80,7 @@ void FE_190409::display_title( void ){
  Discription: Shows the ConF title
 **********************************************************************************************************/
 void FE_190409::display_show_config( void  ){
+    tm1637.point(false);
     tm1637.displayStr("CONF");
     
 }
@@ -93,6 +94,7 @@ void FE_190409::display_show_config( void  ){
  Discription: Shows current configured IronMode
 **********************************************************************************************************/
 void FE_190409::display_show_current_ironmode( SolderingIronType_t Iron){
+    tm1637.point(false);
     switch( Iron){
         case IRON_HAKKO_FX8801:{
             tm1637.displayStr("0 C1"); //24V
@@ -122,7 +124,7 @@ void FE_190409::display_show_current_ironmode( SolderingIronType_t Iron){
  Discription: inverts the display
 **********************************************************************************************************/
 void FE_190409::display_invert( bool invert ) {
-
+    //Not used for this Hardware
 }
 
 /**********************************************************************************************************
@@ -134,9 +136,7 @@ void FE_190409::display_invert( bool invert ) {
  Discription: Dims the display if parmaeter is true, otherwyse restores brightness
 **********************************************************************************************************/
 void FE_190409::display_dim(bool dim ){
-
-    
-    
+    //Not used for this Hardware
 }
 
 /**********************************************************************************************************
@@ -229,6 +229,7 @@ void FE_190409::display_show_TempError(uint8_t ErrNo){
 
         
     }
+    tm1637.point(false);       
     tm1637.displayStr(err_str);
 
 }
@@ -243,6 +244,7 @@ void FE_190409::display_show_TempError(uint8_t ErrNo){
 **********************************************************************************************************/
 void FE_190409::display_show_Undervoltage(uint16_t Vin){
 
+  tm1637.point(false);
   tm1637.displayStr("UVLO");
 
 }
@@ -257,5 +259,6 @@ void FE_190409::display_show_Undervoltage(uint16_t Vin){
 **********************************************************************************************************/
 void FE_190409::display_show_sleep( uint16_t timestamp){
 
+  tm1637.point(false);
   tm1637.displayStr("----");
 }

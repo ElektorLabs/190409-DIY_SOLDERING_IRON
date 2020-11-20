@@ -543,7 +543,7 @@ void rotary_EncoderMenuDisable()
 
 
 /**********************************************************************************************************
-                                void read_Current()        
+                                void PWM_Off()        
 **********************************************************************************************************
  Function:    void PWM_Off()
  Input:       None
@@ -555,6 +555,8 @@ void PWM_Off()
   cli();
     adjustPWM_Running=1;
     current_PWM=0;
+    Station.SetPWM(current_PWM);
+    Station.PWM.Off();
     adjustPWM_Running=0;
   sei();
 }  
